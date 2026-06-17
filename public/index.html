@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prepaid Reload Card Inventory</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <h1>Prepaid Reload Card Inventory</h1>
+        <p class="subtitle">Smart stock tracking for prepaid cards</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="dashboard" role="tab">Inventory Overview</button>
+    <button class="tab" data-tab="stock-in" role="tab">Stock In</button>
+    <button class="tab" data-tab="stock-out" role="tab">Stock Out</button>
+    <button class="tab" data-tab="history" role="tab">Transaction History</button>
+    <button class="tab" data-tab="daily-report" role="tab">Daily Report</button>
+    <button class="tab" data-tab="manage-inventory" role="tab">Manage Inventory</button>
+  </nav>
+
+  <main class="container">
+    <div id="message" class="message hidden" role="alert"></div>
+
+    <section id="dashboard" class="panel active" role="tabpanel">
+      <div class="panel-header">
+        <h2>Inventory Overview</h2>
+        <button type="button" class="btn btn-secondary" id="refresh-dashboard">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Carrier</th>
+              <th>Value (RM)</th>
+              <th>Current Stock</th>
+              <th>Total Price (RM)</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="dashboard-body">
+            <tr><td colspan="6" class="empty">Loading...</td></tr>
+          </tbody>
+          <tfoot id="dashboard-foot" class="hidden"></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section id="stock-in" class="panel" role="tabpanel">
+      <h2>Stock In</h2>
+      <form id="stock-in-form" class="form">
+        <label>
+          Select Product
+          <select id="stock-in-product" required></select>
+        </label>
+        <label>
+          Quantity
+          <input type="number" id="stock-in-quantity" min="1" step="1" required placeholder="e.g. 20">
+        </label>
+        <button type="submit" class="btn btn-primary">Confirm Stock In</button>
+      </form>
+    </section>
+
+    <section id="stock-out" class="panel" role="tabpanel">
+      <h2>Stock Out</h2>
+      <form id="stock-out-form" class="form">
+        <label>
+          Select Product
+          <select id="stock-out-product" required></select>
+        </label>
+        <p id="stock-out-current" class="hint">Current stock: -</p>
+        <label>
+          Quantity
+          <input type="number" id="stock-out-quantity" min="1" step="1" required placeholder="e.g. 5">
+        </label>
+        <button type="submit" class="btn btn-primary">Confirm Stock Out</button>
+      </form>
+    </section>
+
+    <section id="history" class="panel" role="tabpanel">
+      <div class="panel-header">
+        <h2>Transaction History</h2>
+        <button type="button" class="btn btn-secondary" id="refresh-history">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Product</th>
+              <th>Type</th>
+              <th>Quantity</th>
+              <th>Stock After</th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <tr><td colspan="5" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="daily-report" class="panel" role="tabpanel">
+      <div class="panel-header">
+        <h2>Daily Report</h2>
+        <div class="report-actions no-print">
+          <label class="report-date-label">
+            Date
+            <input type="date" id="report-date">
+          </label>
+          <button type="button" class="btn btn-primary" id="generate-report">Generate Report</button>
+          <button type="button" class="btn btn-secondary hidden" id="print-report">Print</button>
+          <button type="button" class="btn btn-secondary hidden" id="download-report">Download</button>
+        </div>
+      </div>
+      <p class="hint no-print">Generate an end-of-day report showing today's stock in and stock out, grouped by carrier.</p>
+      <div id="report-content" class="report-content">
+        <p class="empty">Select a date and click Generate Report.</p>
+      </div>
+    </section>
+
+    <section id="manage-inventory" class="panel" role="tabpanel">
+      <div class="panel-header">
+        <h2 id="product-form-title">Add Product</h2>
+        <button type="button" class="btn btn-secondary hidden" id="cancel-edit">Cancel Edit</button>
+      </div>
+      <form id="product-form" class="form">
+        <input type="hidden" id="product-id" value="">
+        <label>
+          Carrier
+          <input type="text" id="product-carrier" required placeholder="e.g. Maxis / CelcomDigi / U Mobile">
+        </label>
+        <label>
+          Value (RM)
+          <input type="number" id="product-denomination" min="1" step="1" required placeholder="e.g. 30">
+        </label>
+        <label>
+          Stock Quantity
+          <input type="number" id="product-quantity" min="0" step="1" value="0" required>
+        </label>
+        <label>
+          Notes (optional)
+          <input type="text" id="product-note" placeholder="e.g. Best seller">
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="product-form-submit">Add Product</button>
+        </div>
+      </form>
+
+      <div class="manage-list">
+        <div class="panel-header">
+          <h2>All Products</h2>
+          <button type="button" class="btn btn-secondary" id="refresh-manage">Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Carrier</th>
+                <th>Value (RM)</th>
+                <th>Stock</th>
+                <th>Total Price (RM)</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="manage-body">
+              <tr><td colspan="6" class="empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
